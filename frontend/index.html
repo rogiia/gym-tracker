@@ -2,55 +2,110 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Gym tracker</title>
-  <base href="/">
-  <meta name="viewport"
-    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
-  <meta name="description" content="">
-  <meta name="keywords" content="">
-  <meta name="author" content="">
-  <meta name="application-name" content="">
-  <meta name="theme-color" content="#33d">
-  <meta name="color-scheme" content="light dark">
-  <meta property="og:title" content="" />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="" />
-  <meta property="og:image" content="" />
-  <link rel="canonical" href="" />
-  <link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gym Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/cal-heatmap/dist/cal-heatmap.css">
 
-  <link rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-    as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-
-  <style>
-    body {
-      background: #fefefe;
-      color: #222;
-      font-family: 'Roboto', sans-serif;
-      padding: 1rem;
-      line-height: 1.8;
-    }
-  </style>
-  <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript>
-    <link rel="stylesheet" href="styles.css">
-  </noscript>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js');
-      });
-    }
-  </script>
-
-  <script type="module" src="app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <script src="https://unpkg.com/cal-heatmap@4.2.4/dist/cal-heatmap.min.js"></script>
+</head>
 
 <body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Gym Tracker</h1>
+      <div id="balanceIndicator" class="balance-indicator">
+        <span id="balanceEmoji" class="balance-emoji">😐</span>
+        <span id="balanceText" class="balance-text">Neutral Balance</span>
+      </div>
+    </header>
 
+    <!-- Add Workout Button -->
+    <div class="action-bar">
+      <button id="addWorkoutBtn" class="btn-primary">Add Today's Workout</button>
+    </div>
+
+    <!-- Heatmap Section -->
+    <section class="heatmap-section">
+      <h2>Training Calendar</h2>
+      <div class="heatmap-controls">
+        <button id="heatmapPrev" class="btn-secondary">← Previous</button>
+        <button id="heatmapNext" class="btn-secondary">Next →</button>
+      </div>
+      <div id="heatmap" class="heatmap-container"></div>
+    </section>
+
+    <!-- Muscle Groups Dashboard -->
+    <section class="muscle-groups-section">
+      <h2>Muscle Groups</h2>
+      <div id="muscleGroupsGrid" class="muscle-groups-grid">
+        <!-- Muscle group cards will be dynamically inserted here -->
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal for Adding/Editing Session -->
+  <div id="sessionModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Workout Session</h3>
+        <button id="closeModal" class="close-btn">&times;</button>
+      </div>
+      <form id="sessionForm">
+        <div class="form-group">
+          <label for="sessionDate">Date:</label>
+          <input type="date" id="sessionDate" name="date" required>
+        </div>
+        <div class="form-group">
+          <label>Muscle Groups Trained:</label>
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="muscleGroup" value="Chest">
+              <span>Chest</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="muscleGroup" value="Legs">
+              <span>Legs</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="muscleGroup" value="Delts">
+              <span>Delts</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="muscleGroup" value="Lats">
+              <span>Lats</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="muscleGroup" value="Triceps">
+              <span>Triceps</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="muscleGroup" value="Biceps">
+              <span>Biceps</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancelBtn" class="btn-secondary">Cancel</button>
+          <button type="submit" id="saveBtn" class="btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div id="loadingIndicator" class="loading-indicator">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Application Scripts -->
+  <script src="api.js" defer></script>
+  <script src="muscleGroups.js" defer></script>
+  <script src="heatmap.js" defer></script>
+  <script src="app.js" defer></script>
 </body>
 
 </html>

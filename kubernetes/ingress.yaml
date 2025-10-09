@@ -1,0 +1,30 @@
+# Optional: Ingress for external access
+# Requires an Ingress controller (e.g., nginx-ingress, traefik) installed in your cluster
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gym-tracker
+  labels:
+    app: gym-tracker
+  annotations:
+    # Uncomment and adjust based on your ingress controller
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # cert-manager.io/cluster-issuer: letsencrypt-prod  # For HTTPS with cert-manager
+spec:
+  ingressClassName: nginx  # Adjust based on your ingress controller
+  rules:
+  - host: gym-tracker.example.com  # Update with your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gym-tracker
+            port:
+              number: 80
+  # Uncomment for HTTPS
+  # tls:
+  # - hosts:
+  #   - gym-tracker.example.com
+  #   secretName: gym-tracker-tls

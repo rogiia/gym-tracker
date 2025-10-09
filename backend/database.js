@@ -1,8 +1,8 @@
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
+import sqlite3 from 'sqlite3';
+import path from 'path';
 
 // Database file path
-const DB_PATH = path.join(__dirname, '../data/gym-tracker.db');
+const DB_PATH = path.join('../data/gym-tracker.db');
 
 // Initialize database connection
 const db = new sqlite3.Database(DB_PATH, (err) => {
@@ -15,7 +15,7 @@ const db = new sqlite3.Database(DB_PATH, (err) => {
 });
 
 // Create tables if they don't exist
-function initializeDatabase() {
+export function initializeDatabase() {
   const createTableSQL = `
     CREATE TABLE IF NOT EXISTS sessions (
       id TEXT PRIMARY KEY,
@@ -34,7 +34,7 @@ function initializeDatabase() {
 }
 
 // Get all sessions
-function getAllSessions(callback) {
+export function getAllSessions(callback) {
   const sql = 'SELECT * FROM sessions ORDER BY date DESC';
   db.all(sql, [], (err, rows) => {
     if (err) {
@@ -52,7 +52,7 @@ function getAllSessions(callback) {
 }
 
 // Get session by ID
-function getSessionById(id, callback) {
+export function getSessionById(id, callback) {
   const sql = 'SELECT * FROM sessions WHERE id = ?';
   db.get(sql, [id], (err, row) => {
     if (err) {
@@ -71,7 +71,7 @@ function getSessionById(id, callback) {
 }
 
 // Create new session
-function createSession(id, date, muscleGroups, callback) {
+export function createSession(id, date, muscleGroups, callback) {
   const sql = 'INSERT INTO sessions (id, date, muscle_groups) VALUES (?, ?, ?)';
   const muscleGroupsJSON = JSON.stringify(muscleGroups);
 
@@ -85,7 +85,7 @@ function createSession(id, date, muscleGroups, callback) {
 }
 
 // Update existing session
-function updateSession(id, date, muscleGroups, callback) {
+export function updateSession(id, date, muscleGroups, callback) {
   const sql = 'UPDATE sessions SET date = ?, muscle_groups = ? WHERE id = ?';
   const muscleGroupsJSON = JSON.stringify(muscleGroups);
 
@@ -101,7 +101,7 @@ function updateSession(id, date, muscleGroups, callback) {
 }
 
 // Delete session
-function deleteSession(id, callback) {
+export function deleteSession(id, callback) {
   const sql = 'DELETE FROM sessions WHERE id = ?';
 
   db.run(sql, [id], function(err) {
@@ -116,7 +116,7 @@ function deleteSession(id, callback) {
 }
 
 // Close database connection
-function closeDatabase() {
+export function closeDatabase() {
   db.close((err) => {
     if (err) {
       console.error('Error closing database:', err.message);
@@ -125,12 +125,3 @@ function closeDatabase() {
     }
   });
 }
-
-module.exports = {
-  getAllSessions,
-  getSessionById,
-  createSession,
-  updateSession,
-  deleteSession,
-  closeDatabase
-};
