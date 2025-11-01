@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gym-tracker
+  labels:
+    app: gym-tracker
+spec:
+  replicas: 1  # Single replica since using SQLite
+  selector:
+    matchLabels:
+      app: gym-tracker
+  template:
+    metadata:
+      labels:
+        app: gym-tracker
+    spec:
+      containers:
+      - name: gym-tracker
+        image: gym-tracker:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 3000
+          name: backend
+          protocol: TCP
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        volumeMounts:
+        - name: data
+          mountPath: /app/data
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 3
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: gym-tracker-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gym-tracker
+  labels:
+    app: gym-tracker
+spec:
+  type: ClusterIP
+  selector:
+    app: gym-tracker
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    protocol: TCP
+  - name: backend
+    port: 3000
+    targetPort: 3000
+    protocol: TCP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: gym-tracker-data
+  labels:
+    app: gym-tracker
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
