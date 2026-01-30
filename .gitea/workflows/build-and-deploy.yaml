@@ -21,7 +21,7 @@ jobs:
       - name: Log in to Gitea Container Registry
         uses: docker/login-action@v3
         with:
-          registry: gitea.yourdomain.com  # Replace with your Gitea domain
+          registry: gitea.rogi.casa
           username: ${{ gitea.actor }}
           password: ${{ secrets.GITEA_TOKEN }}
 
@@ -39,15 +39,15 @@ jobs:
           context: .
           push: true
           tags: |
-            gitea.yourdomain.com/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}
-            gitea.yourdomain.com/${{ gitea.repository_owner }}/gym-tracker:latest
-          cache-from: type=registry,ref=gitea.yourdomain.com/${{ gitea.repository_owner }}/gym-tracker:latest
+            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}
+            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:latest
+          cache-from: type=registry,ref=gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:latest
           cache-to: type=inline
 
       - name: Checkout k3s-cluster repo
         uses: actions/checkout@v4
         with:
-          repository: yourusername/k3s-cluster  # Replace with your manifests repo
+          repository: roger/k3s-cluster
           token: ${{ secrets.K3S_REPO_TOKEN }}
           path: k3s-cluster
 
@@ -55,7 +55,7 @@ jobs:
         run: |
           cd k3s-cluster
           # Update the image tag in the deployment file
-          sed -i "s|image: gitea.yourdomain.com/.*/gym-tracker:.*|image: gitea.yourdomain.com/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
+          sed -i "s|image: gitea.rogi.casa/.*/gym-tracker:.*|image: gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
           
       - name: Commit and push changes
         run: |
