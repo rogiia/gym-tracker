@@ -23,7 +23,7 @@ jobs:
         with:
           registry: gitea.rogi.casa
           username: ${{ gitea.actor }}
-          password: ${{ secrets.GITEA_TOKEN }}
+          password: ${{ secrets.RUNNER_GITEA_TOKEN }}
 
       - name: Extract version from commit
         id: version
