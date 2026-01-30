@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: roger/k3s-cluster
-          token: ${{ secrets.K3S_REPO_TOKEN }}
+          token: ${{ secrets.RUNNER_GITEA_TOKEN }}
           path: k3s-cluster
 
       - name: Update deployment image tag
