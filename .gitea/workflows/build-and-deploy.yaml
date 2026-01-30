@@ -39,9 +39,9 @@ jobs:
           context: .
           push: true
           tags: |
-            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}
-            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:latest
-          cache-from: type=registry,ref=gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:latest
+            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:${{ steps.version.outputs.version }}
+            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:latest
+          cache-from: type=registry,ref=gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:latest
           cache-to: type=inline
 
       - name: Checkout k3s-cluster repo
@@ -56,7 +56,7 @@ jobs:
           cd k3s-cluster
           echo "Updating deployment image to version: ${{ steps.version.outputs.version }}"
           # Update the image tag in the deployment file
-          sed -i "s|image: gitea.rogi.casa/.*/gym-tracker:.*|image: gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
+          sed -i "s|image: gitea.rogi.casa/.*/gym-tracker:.*|image: gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
           # Print the updated image line for verification
           grep "image: gitea.rogi.casa/.*/gym-tracker:" gym-tracker/deployment.yaml
           
