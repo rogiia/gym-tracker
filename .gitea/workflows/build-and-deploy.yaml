@@ -54,8 +54,11 @@ jobs:
       - name: Update deployment image tag
         run: |
           cd k3s-cluster
+          echo "Updating deployment image to version: ${{ steps.version.outputs.version }}"
           # Update the image tag in the deployment file
           sed -i "s|image: gitea.rogi.casa/.*/gym-tracker:.*|image: gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
+          # Print the updated image line for verification
+          grep "image: gitea.rogi.casa/.*/gym-tracker:" gym-tracker/deployment.yaml
           
       - name: Commit and push changes
         run: |
