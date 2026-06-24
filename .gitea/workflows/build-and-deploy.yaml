@@ -21,9 +21,9 @@ jobs:
       - name: Log in to Gitea Container Registry
         uses: docker/login-action@v3
         with:
-          registry: gitea.rogi.casa
-          username: ${{ gitea.actor }}
-          password: ${{ secrets.RUNNER_GITEA_TOKEN }}
+          registry: git.rogi.casa
+          username: ${{ git.actor }}
+          password: ${{ secrets.GITEA_TOKEN }}
 
       - name: Extract version from commit
         id: version
@@ -39,8 +39,8 @@ jobs:
           context: .
           push: true
           tags: |
-            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:${{ steps.version.outputs.version }}
-            gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:latest
+            git.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:${{ steps.version.outputs.version }}
+            git.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:latest
           cache-from: type=registry,ref=gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:latest
           cache-to: type=inline
 
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: roger/k3s-cluster
-          token: ${{ secrets.RUNNER_GITEA_TOKEN }}
+          token: ${{ secrets.GITEA_TOKEN }}
           path: k3s-cluster
 
       - name: Update deployment image tag
@@ -56,9 +56,9 @@ jobs:
           cd k3s-cluster
           echo "Updating deployment image to version: ${{ steps.version.outputs.version }}"
           # Update the image tag in the deployment file
-          sed -i "s|image: gitea.rogi.casa/.*/gym-tracker:.*|image: gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
+          sed -i "s|image: git.rogi.casa/.*/gym-tracker:.*|image: gitea.rogi.casa/${{ gitea.repository_owner }}/gym-tracker/gym-tracker:${{ steps.version.outputs.version }}|g" gym-tracker/deployment.yaml
           # Print the updated image line for verification
-          grep "image: gitea.rogi.casa/.*/gym-tracker:" gym-tracker/deployment.yaml
+          grep "image: git.rogi.casa/.*/gym-tracker:" gym-tracker/deployment.yaml
           
       - name: Commit and push changes
         run: |
